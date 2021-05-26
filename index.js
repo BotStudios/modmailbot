@@ -1,25 +1,17 @@
 'use strict';
 const Discord = require('discord.js');
-const path = require('./path.js')
 require('dotenv').config()
-const client = new Discord.Client();
-const Discord = require('discord.js');
 const client = new Discord.Client();
 const server = process.env.INBOX
 client.on("message", async (message) => {
 const inbox = client.channels.cache.get(server)
 const prefix = process.env.PREFIX
 
-if (!message.content.startsWith(prefix) && !message.channel.id == inbox) return;
-
-const args = message.content.slice(prefix.length).trim().split(' ');
-const command = args.shift().toLowerCase();
-const args1 = args[0] || message.author.id;
 
 if (!message.content.startsWith(Prefix) && !message.channel.id == inbox) return;
 const args = message.content.slice(Prefix.length).trim().split(' ');
 const command = args.shift().toLowerCase();
-const args1 = args[0] 
+const args1 = args[0] || message.author.id
 if(command == "check"){
   message.delete()
   if(message.channel.id == inbox){
