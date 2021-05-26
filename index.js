@@ -16,16 +16,61 @@ const args = message.content.slice(prefix.length).trim().split(' ');
 const command = args.shift().toLowerCase();
 const args1 = args[0] || message.author.id;
 
+if (!message.content.startsWith(Prefix) && !message.channel.id == inbox) return;
+const args = message.content.slice(Prefix.length).trim().split(' ');
+const command = args.shift().toLowerCase();
+const args1 = args[0] 
+if(command == "check"){
+  message.delete()
+  if(message.channel.id == inbox){
+    resolve(message.author.tag+' Ran Check Command')
+const embed = new Discord.MessageEmbed()
+   .setDescription(`**Permissions Checker**\n\n> Check If The Bot Has Permission That It Needs\n\n- Add Reaction : **${message.member.guild.me.hasPermission('ADD_REACTIONS')}**\n- Manage Message : **${message.member.guild.me.hasPermission('MANAGE_MESSAGES')}**\n- Embed Links : **${message.member.guild.me.hasPermission('EMBED_LINKS')}**\n- Read Message History : **${message.member.guild.me.hasPermission('READ_MESSAGE_HISTORY')}**\n- View Channel : **${message.member.guild.me.hasPermission('VIEW_CHANNEL')}**\n- Send Message : **${message.member.guild.me.hasPermission('SEND_MESSAGES')}**`)
+   .setFooter('Check The Console For More Information')
+   message.channel.send(embed).catch(err => {
+     message.channel.send(`**Permissions Checker**\n\n> Check If The Bot Has Permission That It Needs\n\n- Add Reaction : **${message.member.guild.me.hasPermission('ADD_REACTIONS')}**\n- Manage Message : **${message.member.guild.me.hasPermission('MANAGE_MESSAGES')}**\n- Embed Links : **${message.member.guild.me.hasPermission('EMBED_LINKS')}**\n- Read Message History : **${message.member.guild.me.hasPermission('READ_MESSAGE_HISTORY')}**\n- View Channel : **${message.member.guild.me.hasPermission('VIEW_CHANNEL')}**\n- Send Message : **${message.member.guild.me.hasPermission('SEND_MESSAGES')}**`)
+     reject(`Modmail.js Error : ${err}`)
+   })
+  }
+}
 if(command == "reply"){
     if(message.channel.id == inbox){
-
-   client.users.cache.get(args1).send( `**Reply From ${message.author.username} : **\n`+`${args[1] || ""}${args[2] || ""}${args[3] || ""}${args[4] || ""}${args[5] || ""}${args[6] || ""}${args[7] || ""}${args[8] || ""}${args[9] || ""}${args[10] || ""}${args[11] || ""}${args[12] || ""}${args[13] || ""}${args[14] || ""}${args[15] || ""}${args[16] || ""}${args[17] || ""}${args[18] || ""}${args[19] || ""}${args[20] || ""}${args[21] || ""}${args[22] || ""}`)
-   message.reply(`Successfully Send Message To <@${args[0]}>`)  
+    
+if(args1 == undefined || args1 == ""){
+ message.delete()
+ message.reply('Please Provide A User ID').then(msg => {
+    msg.delete({timeout:5000})
+  }).catch(err => {
+    reject(`Modmail.js Error : ${err}`)
+  })
+}else{
+  if(args[1] == undefined || args[1] == ""){
+    message.delete()
+    message.reply('Please Provide A Message').then(msg => {
+      msg.delete({timeout:5000})
+    }).catch(err => {
+    reject(`Modmail.js Error : ${err}`)
+  })
+  }else{
+     try{
+     client.users.cache.get(args1).send( `**Reply From ${message.author.username} : **\n`+`${message.content.slice(Prefix.length+7+args[0].length)}`).catch(err => {
+    reject(`Modmail.js Error : ${err}`)
+  })
+   message.reply(`Successfully Send Message To <@${args[0]}>`).then(msg => {
+     msg.delete({timeout:3000})
+   }).catch(err => {
+    reject(`Modmail.js Error : ${err}`)
+  })
    message.react('✅');
+   }catch(e){
+     message.reply(e)
+   }
+  }}
     }else {
       
     }
 }
+
 
 
 
