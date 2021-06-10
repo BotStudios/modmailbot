@@ -13,6 +13,10 @@ A Discord Modmail Bot Base On Modmail.js
 - Discord-Sender
 - Dotenv 
 
+#### Plugins
+
+You'll have to manually insert function into the code, please read the [docs](https://modmail.js.org) to learn how
+
 #### Any Issue ?
 
 Check Out [modmail.js docs](https://modmail.js.org) To Learn More
