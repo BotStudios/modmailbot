@@ -4,7 +4,7 @@ A Discord Modmail Bot Base On Modmail.js
 #### Simple Setup/Startup
 
 1. Edit [`.env`](./.env)
-2. Replace `TOKEN`, `PREFIX` And `INBOX`
+2. Replace `token`, `prefix` And `inbox`
 3. Run [`start.bat`](./start.bat)
 
 #### Require Packages
@@ -13,6 +13,6 @@ A Discord Modmail Bot Base On Modmail.js
 - Discord-Sender
 - Dotenv 
 
-#### Any Problem ?
+#### Any Issue ?
 
-Check Out [modmail.js Homepage](https://github.com/modmail.js) To Learn More
+Check Out [modmail.js docs](https://modmail.js.org) To Learn More
