@@ -1,36 +1,48 @@
-'use strict';
+'use strict';  
 const Discord = require('discord.js');
-require('dotenv').config()
 const client = new Discord.Client();
-const server = process.env.INBOX
-client.on("message", async (message) => {
+
+
+
+
+const token = process.env.token
+const prefix = process.env.prefix
+const server = process.env.inbox
+client.on("message",  message => {
+  const reply = (msg) => {
+return message.reply(msg)
+}
 const inbox = client.channels.cache.get(server)
-const prefix = process.env.PREFIX
+	if (!message.content.startsWith(prefix) || message.author.bot) return;
 
-
-if (!message.content.startsWith(Prefix) && !message.channel.id == inbox) return;
-const args = message.content.slice(Prefix.length).trim().split(' ');
+if (!message.content.startsWith(prefix)) return;
+if(!message.channel.id == inbox) return;
+const args = message.content.slice(prefix.length).trim().split(' ');
 const command = args.shift().toLowerCase();
-const args1 = args[0] || message.author.id
+const args1 = args[0] 
+
 if(command == "check"){
-  message.delete()
   if(message.channel.id == inbox){
+
     resolve(message.author.tag+' Ran Check Command')
 const embed = new Discord.MessageEmbed()
-   .setDescription(`**Permissions Checker**\n\n> Check If The Bot Has Permission That It Needs\n\n- Add Reaction : **${message.member.guild.me.hasPermission('ADD_REACTIONS')}**\n- Manage Message : **${message.member.guild.me.hasPermission('MANAGE_MESSAGES')}**\n- Embed Links : **${message.member.guild.me.hasPermission('EMBED_LINKS')}**\n- Read Message History : **${message.member.guild.me.hasPermission('READ_MESSAGE_HISTORY')}**\n- View Channel : **${message.member.guild.me.hasPermission('VIEW_CHANNEL')}**\n- Send Message : **${message.member.guild.me.hasPermission('SEND_MESSAGES')}**`)
+   .setDescription(`**Permissions Checker**\n\n> Check If The Bot Has The Permission That It Needs\n\n- Add Reaction : **${message.member.guild.me.hasPermission('ADD_REACTIONS')}**\n- Manage Message : **${message.member.guild.me.hasPermission('MANAGE_MESSAGES')}**\n- Embed Links : **${message.member.guild.me.hasPermission('EMBED_LINKS')}**\n- Read Message History : **${message.member.guild.me.hasPermission('READ_MESSAGE_HISTORY')}**\n- View Channel : **${message.member.guild.me.hasPermission('VIEW_CHANNEL')}**\n- Send Message : **${message.member.guild.me.hasPermission('SEND_MESSAGES')}**`)
    .setFooter('Check The Console For More Information')
    message.channel.send(embed).catch(err => {
      message.channel.send(`**Permissions Checker**\n\n> Check If The Bot Has Permission That It Needs\n\n- Add Reaction : **${message.member.guild.me.hasPermission('ADD_REACTIONS')}**\n- Manage Message : **${message.member.guild.me.hasPermission('MANAGE_MESSAGES')}**\n- Embed Links : **${message.member.guild.me.hasPermission('EMBED_LINKS')}**\n- Read Message History : **${message.member.guild.me.hasPermission('READ_MESSAGE_HISTORY')}**\n- View Channel : **${message.member.guild.me.hasPermission('VIEW_CHANNEL')}**\n- Send Message : **${message.member.guild.me.hasPermission('SEND_MESSAGES')}**`)
      reject(`Modmail.js Error : ${err}`)
+
    })
   }
+        message.delete({timeout:1000})
+
 }
 if(command == "reply"){
     if(message.channel.id == inbox){
     
 if(args1 == undefined || args1 == ""){
  message.delete()
- message.reply('Please Provide A User ID').then(msg => {
+ reply('Please Provide A User ID').then(msg => {
     msg.delete({timeout:5000})
   }).catch(err => {
     reject(`Modmail.js Error : ${err}`)
@@ -38,31 +50,37 @@ if(args1 == undefined || args1 == ""){
 }else{
   if(args[1] == undefined || args[1] == ""){
     message.delete()
-    message.reply('Please Provide A Message').then(msg => {
+   reply('Please Provide A Message').then(msg => {
       msg.delete({timeout:5000})
     }).catch(err => {
     reject(`Modmail.js Error : ${err}`)
   })
   }else{
      try{
-     client.users.cache.get(args1).send( `**Reply From ${message.author.username} : **\n`+`${message.content.slice(Prefix.length+7+args[0].length)}`).catch(err => {
-    reject(`Modmail.js Error : ${err}`)
-  })
-   message.reply(`Successfully Send Message To <@${args[0]}>`).then(msg => {
+     client.users.cache.get(args1).send( `**Reply From ${message.author.username} : **\n`+`${message.content.slice(prefix.length+7+args[0].length)}`).then(msg => {
+       reply(`Successfully Send Message To <@${args[0]}>`).then(msg => {
      msg.delete({timeout:3000})
    }).catch(err => {
     reject(`Modmail.js Error : ${err}`)
+
   })
    message.react('✅');
+       }).catch(err => {
+       message.react('❌');
+    reject(`Modmail.js Error : ${err}`)
+       
+
+  })
+  
    }catch(e){
-     message.reply(e)
+      message.react('❌');
+    reply(e)
    }
   }}
     }else {
       
     }
 }
-
 
 
 
@@ -79,16 +97,34 @@ if(message.channel.type == 'dm'){
   const inbox = client.channels.cache.get(server);
 if(message.author.id == `${client.user.id}`){
 }else {
-    inbox.send(`${message.author} : ${message.content}`);
+  const embed = new Discord.MessageEmbed()
+   .setAuthor('Inbox')
+   .setDescription(`**__From__ :** <@${message.author.id}> (${message.author.username}#${message.author.discriminator})\n`)
+   	.setTimestamp()
+.setFooter(`ID : ${message.author.id}`,message.author.avatarURL({ dynamic:true }))
+
+   if(message.content){
+     embed.addField(`**__Message__ :**\n`, '```fix\n'+message.content+'```'
+,false)
+}
+    if (message.attachments.size > 0) {
+
+  embed.setImage(`${message.attachments.array()[0].url || ""}`)
+    }
+   if(obj.message){
+     inbox.send(`${obj.message || "\n"}`, {embed:embed})
+   }else {
+    inbox.send(embed);
+    }
 }
 }
 });
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}! Modmail Is Ready !`);
+  
+
 });
-client.login(process.env.TOKEN)
 
-
-
+client.login(token)
 
