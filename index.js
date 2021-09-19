@@ -106,7 +106,7 @@ if(message.author.id == `${client.user.id}`){
 }
     if (message.attachments.size > 0) {
 
-  embed.setImage(`${message.attachments.array()[0].url || ""}`)
+  embed.setImage(`${message.attachments.first().url || ""}`)
     }
     inbox.send({ embeds: [embed] });
   
