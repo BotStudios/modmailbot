@@ -77,7 +77,6 @@ if(args1 == undefined || args1 == ""){
   });
    }catch(e){
       message.react('❌');
-    reply(e)
    }
   }}
     }else {
