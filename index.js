@@ -47,7 +47,7 @@ if(args1 == undefined || args1 == ""){
         msg.delete()
   }, 5000)
   }).catch(err => {
-    reject(`Modmail.js Error : ${err}`)
+    throw new Error(`Modmail.js Error : ${err}`);
   })
 }else{
   if(args[1] == undefined || args[1] == ""){
