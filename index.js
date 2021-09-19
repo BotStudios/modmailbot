@@ -1,6 +1,6 @@
 'use strict';  
 const Discord = require('discord.js');
-const { Client, Permissions } = require('discord.js');
+const { Client, Permissions, Intents } = require('discord.js');
 const intents = [ Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.DIRECT_MESSAGES ];
 require('dotenv').config();
 const token = process.env.token;
