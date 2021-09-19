@@ -27,7 +27,7 @@ if(message.channel.type != 'GUILD_TEXT')return;
 if(command == "check"){
   if(message.channel.id == inbox){
     console.log(message.author.tag+' Ran Check Command');
-const embed = new Discord.MessageEmbed();
+const embed = new Discord.MessageEmbed()
    .setDescription(`**Permissions Checker**\n\n> Check If The Bot Has The Permission That It Needs\n\n- Add Reaction : **${message.member.guild.me.permissions.has(Permissions.FLAGS.ADD_REACTION)}**\n- Manage Message : **${message.member.guild.me.permissions.has('MANAGE_MESSAGES')}**\n- Embed Links : **${message.member.guild.me.permissions.has(Permissions.FLAGS.EMBED_LINKS)}**\n- Read Message History : **${message.member.guild.me.permissions.has(Permissions.FLAGS.READ_MESSAGE_HISTORY)}**\n- View Channel : **${message.member.guild.me.permissions.has(Permissions.FLAGS.VIEW_CHANNEL)}**\n- Send Message : **${message.member.guild.me.permissions.has(Permissions.FLAGS.SEND_MESSAGES)}**`);
    .setFooter('Check The Console For More Information')
    message.reply({ embeds: [embed] }).catch(err => {
