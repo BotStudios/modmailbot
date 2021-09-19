@@ -32,7 +32,7 @@ const embed = new Discord.MessageEmbed()
    .setFooter('Check The Console For More Information')
    message.reply({ embeds: [embed] }).catch(err => {
      message.channel.send(`**Permissions Checker**\n\n> Check If The Bot Has Permission That It Needs\n\n- Add Reaction : **${message.member.guild.me.permissions.has(Permissions.FLAGS.ADD_REACTION)}**\n- Manage Message : **${message.member.guild.me.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES)}**\n- Embed Links : **${message.member.guild.me.permissions.has(Permissions.FLAGS.EMBED_LINKS)}**\n- Read Message History : **${message.member.guild.me.permissions.has('READ_MESSAGE_HISTORY')}**\n- View Channel : **${message.member.guild.me.permissions.has(Permissions.FLAGS.VIEW_CHANNEL)}**\n- Send Message : **${message.member.guild.me.permissions.has(Permissions.FLAGS.SEND_MESSAGES)}**`);
-     throw new Error(`Modmail.js Error : ${err}`);
+     console.error(`Modmail Error : ${err}`);
    })
   }
 
@@ -47,7 +47,7 @@ if(args1 == undefined || args1 == ""){
         msg.delete()
   }, 5000)
   }).catch(err => {
-    throw new Error(`Modmail.js Error : ${err}`);
+    console.error(`Modmail Error : ${err}`);
   })
 }else{
   if(args[1] == undefined || args[1] == ""){
@@ -57,7 +57,7 @@ if(args1 == undefined || args1 == ""){
         msg.delete()
   }, 5000)
     }).catch(err => {
-    throw new Error(`Modmail.js Error : ${err}`);
+    console.error(`Modmail Error : ${err}`);
   })
   }else{
      try{
@@ -67,13 +67,13 @@ if(args1 == undefined || args1 == ""){
         msg.delete()
   }, 3000)
    }).catch(err => {
-    throw new Error(`Modmail.js Error : ${err}`);
+    console.error(`Modmail Error : ${err}`);
 
   })
    message.react('✅');
        }).catch(err => {
        message.react('❌');
-    throw new Error(`Modmail.js Error : ${err}`); 
+    console.error(`Modmail Error : ${err}`); 
   });
    }catch(e){
       message.react('❌');
