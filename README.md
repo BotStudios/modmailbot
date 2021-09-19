@@ -15,7 +15,7 @@ A Discord Modmail Bot Base On Modmail.js
 
 #### Plugins
 
-You'll have to manually insert function into the code, please read the [docs](https://modmail.js.org) to learn how
+You'll have to insert the function manually into the code, please read the [docs](https://modmail.js.org) to learn how
 
 #### Any Issue ?
 
