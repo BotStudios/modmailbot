@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles.css">
+    <title>Document</title>
+</head>
+<body>
+  <%- locals.content %>
+</body>
+<script>
+function toTimestamp(date) {
+    const timestamp = date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      hour12: true,
+      minute: 'numeric'
+    });
+  
+    const wasToday = new Date().getDay() / date.getDay() === 1;
+    const wasYesterday = new Date().getDate() % date.getDate() === 1;
+    const isTommorow = date.getTime() % new Date().getDate() === 1;
+    
+    if (wasToday || wasYesterday)
+      return `Today at ${timestamp}`;
+    if (wasYesterday)
+      return `Yesterday at ${timestamp}`;
+    else if (isTommorow)
+      return `Tommorow at ${timestamp}`;
+  
+    return date
+      .toJSON()
+      .slice(0,10)
+      .split('-')
+      .reverse()
+      .join('/');
+  }
+  [...document.getElementsByClassName("timestamp")].forEach((e) => {
+  e.innerHTML = toTimestamp(new Date(e.innerHTML));
+})
+</script>
+</html>
