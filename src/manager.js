@@ -182,7 +182,7 @@ async sendInbox(message) {
     data.save().catch((err) => { });
   }
    message.react("✅");
-   return await this.client.channels.cache.get(data.Channel).send({content: `${config?.notify ? config?.notify : ""}`, embeds: [embed, ...embeds]}).catch(console.log);
+   return await this.client.channels.cache.get(data.Channel).send({content: `${config?.notifyMsg ? config?.notifyMsg : ""}`, embeds: [embed, ...embeds]}).catch(console.log);
 
 }
   
