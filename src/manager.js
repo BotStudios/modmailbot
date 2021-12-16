@@ -65,17 +65,16 @@ async command(message) {
           if(!wasDeleted)return this.shortMessage(message, 'This log does not exist.', 'error', { name: 'Error' });
           return this.shortMessage(message, `**${args[1]}** was removed from the modmail log.`, 'error');  
           break;
+          case "view":
           if(!args[1])return this.shortMessage(message, 'Please provide a log ID.', 'custom');
           const data = await this.getLog(args[1]);
           if(!data)return this.shortMessage(message, 'This log does not exist.', 'error', { name: 'Error' });
-          const content = `
-          User: ${data.User}
-          Channel: ${data.Channel}
-          Conversation: ${data.Messages}
-          `;
+          const content = JSON.stringify({
+            User: data?.User,
+            Channel: data?.Channel,
+            Messages: data?.Messages
+          });
           return message.reply({ files: [ new this.Discord.MessageAttachment(Buffer.from(content, 'utf-8'), 'message.txt') ] })
-          case "view":
-
           break;
           default:
             if(!args[0])return this.shortMessage(message, 'Please provide a log ID.', 'error');
@@ -183,7 +182,7 @@ async sendInbox(message) {
     data.save().catch((err) => { });
   }
    message.react("✅");
-   return await this.client.channels.cache.get(data.Channel).send({content: `<@&705043754792386601>`, embeds: [embed, ...embeds]}).catch(console.log);
+   return await this.client.channels.cache.get(data.Channel).send({content: `${config?.notify ? config?.notify : ""}`, embeds: [embed, ...embeds]}).catch(console.log);
 
 }
   
