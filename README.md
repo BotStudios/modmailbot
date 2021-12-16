@@ -1,22 +1,13 @@
 # Discord Modmail
-A Discord Modmail Bot Base On Modmail.js 
+A Feature Rich [Discord.js](https://github.com/discordjs/discord.js) Modmail Bot
 
-#### Simple Setup/Startup
+## About
+- ✨ **Customizable** - Prefix, Bot Status, Log Channel, .etc
+- 👀 **No Tracking** - We do not collect any data from you
+- 🕓 **Easy To Setup** - Setup The Modmail Bot Within 15 minutes
+- ⚡ **Extendable** - You Can Easily Integrate This Modmail On Your Existing Discord.js Projects
 
-1. Edit [`.env`](./.env)
-2. Replace `token`, `prefix` And `inbox`
-3. Run [`start.bat`](./start.bat)
-
-#### Require Packages
-
-- Discord.js
-- Discord-Sender
-- Dotenv 
-
-#### Plugins
-
-You'll have to insert the function manually into the code, please read the [docs](https://modmail.js.org) to learn how
-
-#### Any Issue ?
-
-Check Out [modmail.js docs](https://modmail.js.org) To Learn More
+## Requirements
+- [node.js `^16.2.0`](https://nodejs.org)
+- A [Discord Bot Application](https://discord.com/developers)
+- A [mongodb (Database)](https://www.mongodb.com)
