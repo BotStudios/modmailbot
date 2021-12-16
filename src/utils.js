@@ -15,7 +15,7 @@ class Utils extends EventEmitter {
         this.config = config;
         this.settings = mongoose.model("modmail_settings", new mongoose.Schema({ tags: Object, blocked: Array }));
         this.model = mongoose.model("modmail", new mongoose.Schema({ User: String, Channel: String, Messages: Array }));
-        this.logs = mongoose.model("modmail_logs", new mongoose.Schema({ Id: String, Channel: String, User: String, Messages: Array }));
+        this.logs = mongoose.model("modmail_logs", new mongoose.Schema({ Id: String, Channel: String, User: String, Timestamp: Number, Messages: Array }));
     }
 
     async ready() { 
@@ -56,6 +56,7 @@ class Utils extends EventEmitter {
           ...db?.tags,
           [`${tag}`]: `${value}`
       };
+      this.emit('tagCreate', { tag, value });      
       return await db.save().catch(err => { console.log(err) });
     }
 
@@ -67,7 +68,7 @@ class Utils extends EventEmitter {
        await this.settings(db).save().then().catch(err => {
            console.log(err)
        });
-       if(exist) this.emit('tagDeleted', tag);
+       if(exist) this.emit('tagDelete', tag);
        return exist;
     }
 
@@ -88,17 +89,23 @@ class Utils extends EventEmitter {
       });
     }
 
+    async getLogsByUserId(id) {
+        return await this.logs.find({
+            User: id
+        });
+    }
+
     async newLog(obj) {
-      this.emit('logCreated', obj);
+      this.emit('logCreate', obj);
       return await this.logs(obj).save();
     }
 
-    async deleteLog(id) {
+    async deleteLog(id, author) {
       const deleted = await this.logs.deleteOne({
           Id: `${id}`
       });
       if(deleted.deletedCount < 1)return false;
-      this.emit('logDeleted', deleted)
+      this.emit('logDeleted', deleted, author)
       return true;
     }
   
@@ -139,12 +146,13 @@ class Utils extends EventEmitter {
                 Id: threadId,            
                 User: data?.User,
                 Channel: data?.Channel, 
-                Messages: data?.Messages
+                Messages: data?.Messages,
+                Timestamp: ''
             }); }
+        const user = await this.client.users.cache.get(data.User);
         if(config?.webhookURI) {
            const webhook = new this.Discord.WebhookClient({ url: config?.webhookURI });
            if(!webhook) this.emit('error', 'Please provide a valid webhook URI for modmail loggings.');
-           const user = await this.client.users.cache.get(data.User);
            webhook.send({
                embeds: [{
                    author: { name: `${user.tag} (${user.id})`, icon_url: `${user.avatarURL()}` },
@@ -154,20 +162,21 @@ class Utils extends EventEmitter {
                }]
            })
         }
+        this.emit('threadClose', user, author);
         }catch(e) {}
         return true;
     }       
 
-    async blockUser(id) {
+    async blockUser(id, author) {
       const db = await this.configure();
       if(db.blocked.includes(id))return false;
       db.blocked.push(id);
       await db.save().catch(err => {});
-      this.emit('userBlocked', id);
+      this.emit('userBlock', id, author);
       return true;
     }
 
-    async unblockUser(id) {
+    async unblockUser(id, author) {
       const db = await this.configure();
       const index = db.blocked.indexOf(id);
       if(index == -1) return false;
@@ -175,7 +184,7 @@ class Utils extends EventEmitter {
         db.blocked.splice(index, 1);
       }
       await db.save().catch(err => {});
-      this.emit('userUnblocked', id);
+      this.emit('userUnblock', id, author);
       return true;
     }
 
