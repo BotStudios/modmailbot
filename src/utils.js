@@ -1,13 +1,18 @@
 const config = require('./config.js');
-const Base = require('./base');
 const mongoose = require('mongoose');
+const { EventEmitter } = require('node:events');
+const uniqBy = require('lodash/uniqBy');
+const error = require('./errors.js');
 
-class Utils extends Base {
+class Utils extends EventEmitter {
     constructor(Discord, client, collection) {
         super();
         this.client = client;
         this.Discord = Discord;
         this.collection = collection;
+        this._ = uniqBy;
+        this.error = error;         
+        this.config = config;
         this.settings = mongoose.model("modmail_settings", new mongoose.Schema({ tags: Object, blocked: Array }));
         this.model = mongoose.model("modmail", new mongoose.Schema({ User: String, Channel: String, Messages: Array }));
         this.logs = mongoose.model("modmail_logs", new mongoose.Schema({ Id: String, Channel: String, User: String, Messages: Array }));
