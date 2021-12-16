@@ -6,4 +6,4 @@ call npm i
 
 echo Starting Up ....
 
-call node index.js
+call node src/index.js
