@@ -61,7 +61,7 @@ async command(message) {
           case "delete":
           if(config?.secureLogs == true)return this.shortMessage(message, "Modmail logs are protected.", 'error', { name: 'Secure Logs'})
           if(!args[1])return this.shortMessage(message, 'Please provide a log ID.', 'custom');
-          const wasDeleted = await this.deleteLog(args[1]);   
+          const wasDeleted = await this.deleteLog(args[1], message?.author);   
           if(!wasDeleted)return this.shortMessage(message, 'This log does not exist.', 'error', { name: 'Error' });
           return this.shortMessage(message, `**${args[1]}** was removed from the modmail log.`, 'error');  
           break;
@@ -72,9 +72,20 @@ async command(message) {
           const content = JSON.stringify({
             User: data?.User,
             Channel: data?.Channel,
-            Messages: data?.Messages
+            Messages: data?.Messages,
+            Id: data?.Id
           });
           return message.reply({ files: [ new this.Discord.MessageAttachment(Buffer.from(content, 'utf-8'), 'message.txt') ] })
+          break;
+          case "past":
+          const id = message?.channel?.topic?.slice(3);
+          const dt = await this.getLogsByUser(id);
+          if(!dt)return this.shortMessage(message, 'This is not a modmail thread channel.', 'error', { name: 'Invalid Channel' });
+          var ct = ''; var dataCount = 0;
+          dt.forEach((e) => {
+          dataCount++; ct += `${dataCount}. ${e?.Id} - ${e?.Timestamp}\n`;
+          });
+          return this.shortMessage(message, '')
           break;
           default:
             if(!args[0])return this.shortMessage(message, 'Please provide a log ID.', 'error');
@@ -87,12 +98,12 @@ async command(message) {
       if(args[0]) id = args[0];
       const userID = (await this.client.users.cache.get(id))?.id;
       if(!userID)return this.shortMessage(message, 'Couldn\'t find this user.', 'error', { name: 'Error' });
-      const blocked = await this.blockUser(userID);
+      const blocked = await this.blockUser(userID, message?.author);
       if(!blocked)return this.shortMessage(message, 'This user was blocked.', 'error', { name: 'Error' });
       return this.shortMessage(message, `Successfully blocked <@!${userID}>(${userID})`, 'success', { name: 'User Blocked' });
    }else if(command == "unblock") {
      if(!args[0])return this.shortMessage(message, 'Please provide a user ID.', 'error');
-     const unblocked = await this.unblockUser(args[0]);
+     const unblocked = await this.unblockUser(args[0], message?.author);
      if(!unblocked)return this.shortMessage(message, 'This is not a blocked user.', 'error');
      return this.shortMessage(message, `Successfully unblocked <@!${args[0]}>(${args[0]})`, 'success', { name: 'User Unblocked' });
    }else if(command == "blocked") {
@@ -182,7 +193,7 @@ async sendInbox(message) {
     data.save().catch((err) => { });
   }
    message.react("✅");
-   return await this.client.channels.cache.get(data.Channel).send({content: `${config?.notifyMsg ? config?.notifyMsg : ""}`, embeds: [embed, ...embeds]}).catch(console.log);
+   return await this.client.channels.cache.get(data.Channel).send({ ...config?.notifyMsg ?  { content: config?.notifyMsg } : {}, embeds: [embed, ...embeds]}).catch(console.log);
 
 }
   
@@ -215,6 +226,7 @@ async createChannel(message) {
     Channel: channel.id,
     Messages: []
 }).then(() => {
+    this.emit('threadCreate', message);    
     message.react('✅');
  });
 setTimeout(async () => {
