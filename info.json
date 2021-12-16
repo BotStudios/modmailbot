@@ -1,0 +1,53 @@
+{
+  "events": {
+    "ready": {
+       "info": "Modmail bot ready to go",
+       "options": {}
+     },
+    "serverReady": {
+       "info": "Modmail-logs web server ready",
+       "options": {
+          "information": "Information about the web server"
+       }
+     },
+    "threadCreate": {
+       "info": "When someone opens a thread",
+       "options": {
+          "message": "The message object"
+       }
+    },
+    "threadClose": {
+       "info": "When someone closes a thread",
+       "options": {
+          "message": "The message object",
+          "user": "The user that closes the thread"
+       }
+    },
+    "tagCreate": {
+       "info": "When someone creates a tag",
+       "options": {
+          "information": "Information about the tag"
+       }
+    },
+    "tagDelete": {
+       "info": "When someone deletes a tag",
+       "options": {
+          "tagName": "The tag name of the deleted tag"
+       }
+    },
+    "logCreate": {
+       "info": "When a modmail log was created",
+       "options": {
+          "datas": "Log datas"
+       }
+    },
+    "logDelete": {
+       "info": "When someone deletes a log",
+       "options": {
+          "id": "The id of the deleted log",
+          "user": "The user that deletes the log"
+       }
+    }
+     
+    
+}
