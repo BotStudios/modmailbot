@@ -20,7 +20,7 @@
        "info": "When someone closes a thread",
        "options": {
           "message": "The message object",
-          "user": "The user that closes the thread"
+          "staff": "The information about the staff that closes the thread"
        }
     },
     "tagCreate": {
@@ -45,7 +45,21 @@
        "info": "When someone deletes a log",
        "options": {
           "id": "The id of the deleted log",
-          "user": "The user that deletes the log"
+          "staff": "The information about the staff that deletes the log"
+       }
+    },
+    "userBlock": {
+       "info": "When someone blocks a user",
+       "options": {
+          "id": "The id of the blocked user",
+          "staff": "The information about the staff that blocks the user"
+       }
+    },
+    "userUnblock": {
+       "info": "When someone unblocks a user",
+       "options": {
+          "id": "The id of the blocked user",
+          "staff": "The information about the staff that unblocks the user"
        }
     }
      
