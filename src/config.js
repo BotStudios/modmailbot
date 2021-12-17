@@ -5,6 +5,7 @@ module.exports = {
     guildID: '',
     category: '',
     roleID: '',
+    activity: '',
     prefix: '',  
     logThreads: false,
     notifyMsg: '',
