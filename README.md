@@ -1,5 +1,5 @@
 # Discord Modmail
-A Feature Rich [Discord.js](https://github.com/discordjs/discord.js) Modmail Bot
+A Feature Rich [Discord.js](https://github.com/discordjs/discord.js) Modmail Bot, Highly Inspired By Other Modmail Bots.
 
 ## About
 - ✨ **Customizable** - Prefix, Bot Status, Log Channel, .etc
