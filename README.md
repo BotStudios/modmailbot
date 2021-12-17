@@ -2,10 +2,12 @@
 A Feature Rich [Discord.js](https://github.com/discordjs/discord.js) Modmail Bot, Highly Inspired By Other Modmail Bots.
 
 ## About
-- ✨ **Customizable** - Prefix, Bot Status, Log Channel, .etc
+- ✨ **Customizable** - Prefix, bot status, log channel, .etc
 - 👀 **No Tracking** - We do not collect any data from you
-- 🕓 **Easy To Setup** - Setup The Modmail Bot Within 15 minutes
-- ⚡ **Extendable** - You Can Easily Integrate This Modmail On Your Existing Discord.js Projects
+- 🕓 **Easy To Setup** - Setup the modmail bot within 15 minutes
+- 💬 **Snippets & Tags** - Reply to a user with ease
+- 📃 **Logs Viewer** - Built in logs viewer (optional)
+- ⚡ **Extendable** - You can easily integrate this modmail on your existing discord.js projects
 
 ## Requirements
 - [node.js `^16.2.0`](https://nodejs.org)
