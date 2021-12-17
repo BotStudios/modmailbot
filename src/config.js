@@ -7,7 +7,7 @@ module.exports = {
     roleID: '',
     activity: '',
     prefix: '',  
-    logThreads: false,
+    logThreads: true,
     notifyMsg: '',
     webhookURI: '',
     logsURI: '',
