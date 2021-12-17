@@ -1,9 +1,6 @@
 name: Bug report
 about: File a bug report
 title: '[BUG]: Your report title'
-labels: ''
-assignees: ''
-
 body:
   - type: input
     id: bot-version
