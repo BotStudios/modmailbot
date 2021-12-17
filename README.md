@@ -7,7 +7,7 @@ A Feature Rich [Discord.js](https://github.com/discordjs/discord.js) Modmail Bot
 - 🕓 **Easy To Setup** - Setup the modmail bot within 15 minutes
 - 💬 **Snippets & Tags** - Reply to a user with ease
 - 📃 **Logs Viewer** - Built in logs viewer (optional)
-- 🔥 **Plugins** - Supports external plugins to enhance user experience
+- 🔥 **Plugins** - Supports external third-party plugins to enhance user experience
 - ⚡ **Extendable** - You can easily integrate this modmail on your existing discord.js projects
 
 ## Requirements
