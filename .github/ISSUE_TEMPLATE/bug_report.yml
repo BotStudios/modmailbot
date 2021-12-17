@@ -1,0 +1,27 @@
+name: Bug report
+about: File a bug report
+title: '[BUG]: Your report title'
+labels: ''
+assignees: ''
+
+body:
+  - type: input
+    id: bot-version
+    attributes:
+      label: Bot Version
+      description: "Check the bot's version by running `<prefix>about`"
+      placeholder: eg. v1.0.0
+    validations:
+      required: true
+  - type: input
+    id: bot-hosting
+    attributes:
+      label: Tell us about the system you use to host the modmail bot
+      placeholder: eg. Linux based, nodejs version 16.2.0
+    validations:
+      required: true
+  - type: textarea
+    id: describe-issue
+    attributes:
+      label: Describe The Issue
+      description: "Explain and describe your issue"
