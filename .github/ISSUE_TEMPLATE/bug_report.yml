@@ -22,6 +22,6 @@ body:
     id: describe-issue
     attributes:
       label: Describe The Issue
-      description: "Explain and describe your issue"
+      description: "Explain your issue"
     validations:
       required: true
