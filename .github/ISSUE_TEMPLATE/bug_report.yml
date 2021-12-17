@@ -11,9 +11,10 @@ body:
     validations:
       required: true
   - type: input
-    id: bot-hosting
+    id: system-info
     attributes:
-      label: "Tell us about the system you use to host the modmail bot"
+      label: "System Information"
+      description: "Please specify the nodejs version and the operating system you use to host the modmail bot"
       placeholder: eg. Linux based, nodejs version 16.2.0
     validations:
       required: true
@@ -22,3 +23,5 @@ body:
     attributes:
       label: Describe The Issue
       description: "Explain and describe your issue"
+    validations:
+      required: true
