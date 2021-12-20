@@ -7,7 +7,9 @@ class Manager extends Utils {
     super(Discord, client, collection);
     this.collection = collection;
     this.client = client;
-    this.reservedCommand = ['delete', 'close', 'tags', 'tag', 'log', 'block', 'unblock', 'blocked'];
+    this.cooldown = new Set();
+    this.editMsg = new Discord.Collection();
+    this.reservedCommand = ['delete', 'close', 'tags', 'tag', 'log', 'block', 'unblock', 'blocked', 'edit'];
 }
 
 async command(message) {
@@ -77,15 +79,18 @@ async command(message) {
           });
           return message.reply({ files: [ new this.Discord.MessageAttachment(Buffer.from(content, 'utf-8'), 'message.txt') ] })
           break;
-          case "past":
+          case "this":
+          if(!data)return; 
           const id = message?.channel?.topic?.slice(3);
-          const dt = await this.getLogsByUser(id);
-          if(!dt)return this.shortMessage(message, 'This is not a modmail thread channel.', 'error', { name: 'Invalid Channel' });
+          if(!id)return this.shortMessage(message, 'This is not a modmail thread channel.', 'error', { name: 'Invalid Channel' });
+          const user = await this.client.users.cache.get(id);
+          const dt = await this.getLogsByUserId(user.id);
           var ct = ''; var dataCount = 0;
           dt.forEach((e) => {
-          dataCount++; ct += `${dataCount}. ${e?.Id} - ${e?.Timestamp}\n`;
+          dataCount++; ct += `${dataCount}. [\`${e?.Id}\`](${config?.logsURI}/${e?.Id}) - <t:${e?.Timestamp}>\n`;
           });
-          return this.shortMessage(message, '')
+          if(dataCount < 1)ct += `Couldn't find any records for ${user.tag}`;
+          return this.shortMessage(message, ct, 'custom', { name: `Thread logs for ${user.username}`, icon_url: user.avatarURL() });
           break;
           default:
             if(!args[0])return this.shortMessage(message, 'Please provide a log ID.', 'error');
@@ -114,11 +119,18 @@ async command(message) {
      });
      if(blockedUserCount < 1) content = "No one was blocked.";
      return this.shortMessage(message, `${content}`, 'custom', { name: 'Blocked Users' });
+   }else if(command == "edit"){
+    if(!data)return; 
+    if(!message?.reference?.messageId) return this.shortMessage(message, 'Please refer to a message.', 'error');
+    if(!args.join(" "))return this.shortMessage(message, 'Please provide a message to be edited.', 'error');
+    var msg = this.editMsg.get(message?.reference?.messageId);
+    if(!msg)return this.shortMessage(message, 'This message cannot be edited.', 'error');
+    return msg.edit(this.getReplyContent(message, args.join(" "), true)).then(this.shortMessage(message, `\`\`\`fix\n${args.join(" ")}\`\`\``, 'success', { name: `Message Edited By ${message?.author?.tag}`, icon_url: `${message?.author?.avatarURL()}`}, { text: `ID : ${msg?.id}` }));
    }else { await this.replyThread(message); }   
 }
 
 
-getReplyContent(message, content) {
+getReplyContent(message, content, isEdited = false) {
  var image = [];
  if(!content && content != "")return;
  if(message?.attachments?.size > 0) {
@@ -127,7 +139,7 @@ getReplyContent(message, content) {
      image.push(`${e.proxyURL || ""}`);
  });
 }
-return `**Reply From ${message.author.username} : **\n`+`${content}${image ? image.join("\n") : ''}`
+return `**${isEdited ? 'Edited ' : ''}Reply From ${message.author.username} : **\n`+`${content}${image ? image.join("\n") : ''}`
 
 }
 
@@ -137,22 +149,26 @@ async replyThread(message) {
    const data = await this.model.findOne({ Channel: message.channel.id });
    if(!data)return;
    var content;
+   var replyMsgId = message.id;
+   var repliedMsg;
    if(config?.replyCommand && message.content.startsWith(`${config?.prefix}${config?.replyCommand}`)){
       content = message.content.slice(config?.prefix?.length+config?.replyCommand?.length+1);
    }else if(!config?.replyCommand) content = message?.content;
    if(message.content.startsWith(`${config?.prefix}`)){
       const tag = await this.getTag(message?.content?.slice(config?.prefix?.length));
       if(tag && !this.reservedCommand.includes(message?.content?.slice(config?.prefix?.length))) {
-          this.shortMessage(message, `${tag}`, 'success', { name: `${message.author.tag}` });
+          this.shortMessage(message, `${tag}`, 'success', { name: `${message.author.tag}`, icon_url: `${message?.author?.avatarURL()}` }).then((m) => replyMsgId = m?.id);
           content = tag;
       }
    }
    if(data.Channel == message?.channel?.id) {
-    this.client.users.cache.get(data.User).send(this.getReplyContent(message, content)).then(async msg => {
+    await this.client.users.cache.get(data.User).send(this.getReplyContent(message, content)).then(async msg => {
+    repliedMsg = msg;
 try{  await message.react('✅') }catch(e) {}
     }).catch(err => { message.react('❌') });
    }else if(message?.channel?.id?.startsWith('ID:')){
-    this.client.users.cache.get(message?.channel?.topic.slice(3)).send(this.getReplyContent(message, content)).then(msg => {
+    await this.client.users.cache.get(message?.channel?.topic.slice(3)).send(this.getReplyContent(message, content)).then(msg => {
+    repliedMsg = msg;
     message.react('✅');
     message.reply(`Successfully Send Message To <@${message?.channel?.topic.slice(3)}>`).then(m => { setTimeout(() => { m.delete() }, 3000) });
     }).catch(err => { message.react('❌'); })
@@ -161,30 +177,37 @@ try{  await message.react('✅') }catch(e) {}
    if (data){
     data.Messages = this.getContent(data?.Channel, message, data?.Messages || []).Messages;
     this.collection.set(data?.User, data);
+    if(replyMsgId && repliedMsg) this.editMsg.set(`${replyMsgId}`, repliedMsg);
     await data.save().catch((err) => { });
   }
 }
 
-  inboxEmbed(message) {
-  return new Discord.MessageEmbed()
-   .setAuthor('Inbox')
-   .setDescription(`**__From__ :** <@${message.author.id}> (${message.author.username}#${message.author.discriminator})\n`)
+  inboxEmbed(message, firstMsg) {
+  var embed = new Discord.MessageEmbed()
    .setTimestamp()
-   .setFooter(`ID : ${message.author.id}`,message.author.avatarURL({ dynamic:true }));
+   .setFooter(`ID : ${message.author.id}`)
+   .setColor(`${config?.colors?.custom}`)
+   .setAuthor(`${message?.author?.tag}`, `${message?.author?.avatarURL()}`);
+   if(firstMsg) embed.setDescription(`**From:** <@!${message?.author?.id}>${message?.content ? `\n\`\`\`fix\n${message?.content}\`\`\`` : ''}`)
+                     .addField('Account Created On', `<t:${Math.floor(new Date(message?.author?.createdAt).getTime() / 1000)}> <t:${Math.floor(new Date(message?.author?.createdAt).getTime() / 1000)}:R>`)
+   if(!firstMsg) { 
+       embed.setAuthor(`From ${message?.author?.tag}`, `${message?.author?.avatarURL()}`);
+       if(message?.content) embed.setDescription(`**Message:**\`\`\`fix\n${message?.content}\`\`\``) 
+    }
+    return embed;
   }
 
 
-async sendInbox(message) {
+async sendInbox(message, firstMsg = false) {
     const embeds = [];
-    const embed = this.inboxEmbed(message);
+    const embed = this.inboxEmbed(message, firstMsg);
     const settings = await this.settings.findOne({});
     if(settings?.blocked?.includes(message.author.id)) return message.react("❌");
     const data = await this.getThread({ User: message.author.id });
     if(!data)return await this.createChannel(message);
-    if(message.content) embed.addField(`**__Message__ :**\n`, '```fix\n'+message.content+'```' ,false);
     if (message.attachments.size > 0) {
     message.attachments.forEach((e) => {
-     embeds.push(new Discord.MessageEmbed().setDescription(`${e.proxyURL || ""}`).setImage(`${e.proxyURL || ""}`));
+     embeds.push(new Discord.MessageEmbed().setDescription(`${e.proxyURL || ""}`).setImage(`${e.proxyURL || ""}`).setColor(`${config?.colors?.custom}`));
     });
    }
    if (data) {
@@ -193,7 +216,7 @@ async sendInbox(message) {
     data.save().catch((err) => { });
   }
    message.react("✅");
-   return await this.client.channels.cache.get(data.Channel).send({ ...config?.notifyMsg ?  { content: config?.notifyMsg } : {}, embeds: [embed, ...embeds]}).catch(console.log);
+   return await this.client.channels.cache.get(data.Channel).send({ ...config?.notifyMsg && firstMsg == true ?  { content: config?.notifyMsg } : {}, embeds: [embed, ...embeds]}).catch(console.log);
 
 }
   
@@ -215,7 +238,9 @@ getContent(channel, message, messages = []) {
 async createChannel(message) {
     const settings = await this.settings.findOne({});
     if(settings?.blocked?.includes(message.author.id)) return message.react("❌");
-   const guild = await this.client.guilds.cache.get(config.guildID);
+    if(this.cooldown.has(message.author.id)) return message.react("❌").then(this.shortMessage(message, "You're on a cooldown, please resend this message after a few seconds", 'error', { name: 'Slow Down...'}));
+    this.cooldown.add(message.author.id);
+    const guild = await this.client.guilds.cache.get(config.guildID);
    const channel = await guild.channels.create(`${message.author.username}`, { type: "GUILD_TEXT", parent: config.category, permissionOverwrites: [{ id: guild.id, deny: ["VIEW_CHANNEL"] }, { id: config.roleID, allow: ["VIEW_CHANNEL"]}, {
     id: this.client.user.id, allow: ["VIEW_CHANNEL"]
   }], topic: `ID:${message.author.id}` });
@@ -230,7 +255,8 @@ async createChannel(message) {
     message.react('✅');
  });
 setTimeout(async () => {
-   await this.sendInbox(message).then((m) => m.pin()).catch(err => {});
+    this.cooldown.delete(message.author.id);
+   await this.sendInbox(message, true).then((m) => m.pin()).catch(err => {});
 }, 1000)
   }
 
