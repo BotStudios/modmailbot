@@ -25,12 +25,13 @@ class Utils extends EventEmitter {
                       this.collection.set(x.User, x);
                   });
         }); 
+        if(typeof config?.activity == 'string') this.client.user.setActivity(config?.activity);
         this.emit('ready');
     }
    
-    async shortMessage(message, msg, color = 'RANDOM', author = {}) {
+    async shortMessage(message, msg, color = 'RANDOM', author = {}, footer = {}) {
       if(!message || !msg)return;
-      message.reply({ embeds: [{ description: `${msg}`, color: `${config?.colors[color]}`, author }] })
+     return message.reply({ embeds: [{ description: `${msg}`, color: `${config?.colors[color]}`, author, footer }] })
     }
 
     async configure() { 
@@ -147,7 +148,7 @@ class Utils extends EventEmitter {
                 User: data?.User,
                 Channel: data?.Channel, 
                 Messages: data?.Messages,
-                Timestamp: ''
+                Timestamp: Math.floor(new Date().getTime() / 1000)
             }); }
         const user = await this.client.users.cache.get(data.User);
         if(config?.webhookURI) {
