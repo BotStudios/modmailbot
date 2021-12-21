@@ -68,6 +68,7 @@ async command(message) {
           return this.shortMessage(message, `**${args[1]}** was removed from the modmail log.`, 'error');  
           break;
           case "view":
+          if(config?.secureLogs == true)return this.shortMessage(message, "Modmail logs are protected.", 'error', { name: 'Secure Logs'});
           if(!args[1])return this.shortMessage(message, 'Please provide a log ID.', 'custom');
           const data = await this.getLog(args[1]);
           if(!data)return this.shortMessage(message, 'This log does not exist.', 'error', { name: 'Error' });
@@ -92,6 +93,22 @@ async command(message) {
           if(dataCount < 1)ct += `Couldn't find any records for ${user.tag}`;
           return this.shortMessage(message, ct, 'custom', { name: `Thread logs for ${user.username}`, icon_url: user.avatarURL() });
           break;
+          case "adduser": 
+          const usr = await this.client.users.cache.get(args[1]);
+          if(!usr) return this.shortMessage(message, 'Please provide a valid user ID', 'error', { name: 'Error' });
+          if((await this.getlogViewers())?.includes(usr.id)) return this.shortMessage(message, 'This user can already view the logs', 'error');
+          await this.addLogViewer(usr.id);
+          this.shortMessage(message, `Successfully added <@!${usr.id}>(${usr.id}) to the logs viewer list.`, 'success', { name: 'Log Viewer Added' });
+          break;
+          case "removeuser":
+          const remUsr = await this.removelogViewer(args[1]);
+          if(!remUsr)return this.shortMessage(message, 'This user cannot view the logs.', 'error');
+          return this.shortMessage(message, `Successfully removed <@!${args[1]}>(${args[1]}) from the log viewer list.`, 'success', { name: 'Log Viewer Remove' });
+          break;
+          case "viewers":
+         const viewers = await this.getlogViewers();
+         return this.listingEmbed(message, viewers, "No one can view the logs.", "Logs Viewer");
+          break;
           default:
             if(!args[0])return this.shortMessage(message, 'Please provide a log ID.', 'error');
             var info = await this.getLog(args[0]);
@@ -112,13 +129,8 @@ async command(message) {
      if(!unblocked)return this.shortMessage(message, 'This is not a blocked user.', 'error');
      return this.shortMessage(message, `Successfully unblocked <@!${args[0]}>(${args[0]})`, 'success', { name: 'User Unblocked' });
    }else if(command == "blocked") {
-     const blocked = await this.getBlockedUsers(); var blockedUserCount = 0; var content = '';
-     blocked.forEach((e) => {
-        blockedUserCount++;
-        content += `${blockedUserCount}. ${e}\n`;
-     });
-     if(blockedUserCount < 1) content = "No one was blocked.";
-     return this.shortMessage(message, `${content}`, 'custom', { name: 'Blocked Users' });
+     const blocked = await this.getBlockedUsers();     
+     return this.listingEmbed(message, blocked, "No one was blocked.", "Blocked Users");
    }else if(command == "edit"){
     if(!data)return; 
     if(!message?.reference?.messageId) return this.shortMessage(message, 'Please refer to a message.', 'error');
