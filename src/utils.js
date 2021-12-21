@@ -13,7 +13,7 @@ class Utils extends EventEmitter {
         this._ = uniqBy;
         this.error = error;         
         this.config = config;
-        this.settings = mongoose.model("modmail_settings", new mongoose.Schema({ tags: Object, blocked: Array }));
+        this.settings = mongoose.model("modmail_settings", new mongoose.Schema({ tags: Object, blocked: Array, logViewers: Array }));
         this.model = mongoose.model("modmail", new mongoose.Schema({ User: String, Channel: String, Messages: Array }));
         this.logs = mongoose.model("modmail_logs", new mongoose.Schema({ Id: String, Channel: String, User: String, Timestamp: Number, Messages: Array }));
     }
@@ -29,9 +29,19 @@ class Utils extends EventEmitter {
         this.emit('ready');
     }
    
-    async shortMessage(message, msg, color = 'RANDOM', author = {}, footer = {}) {
+    async shortMessage(message, msg, color = 'custom', author = {}, footer = {}) {
       if(!message || !msg)return;
      return message.reply({ embeds: [{ description: `${msg}`, color: `${config?.colors[color]}`, author, footer }] })
+    }
+
+    async listingEmbed(message, data, msg, name) {
+     var dataCount = 0; var content = '';
+        data?.forEach((e) => {
+        dataCount++;
+        content += `${dataCount}. <@!${e}> - ${e}\n`;
+        });
+        if(dataCount < 1) content = `${msg}`;
+        return this.shortMessage(message, `${content}`, 'custom', { name });
     }
 
     async configure() { 
@@ -193,6 +203,32 @@ class Utils extends EventEmitter {
       const db = await this.configure();
       return db?.blocked;
     } 
+
+    async addLogViewer(id) {
+        const db = await this.configure();
+        if(db.logViewers.includes(id))return false;
+        db.logViewers.push(id);
+        await db.save().catch(err => {});
+        this.emit('logViewerAdd', id);
+        return true;
+      }
+  
+      async removelogViewer(id) {
+        const db = await this.configure();
+        const index = db.logViewers.indexOf(id);
+        if(index == -1) return false;
+        if (index > -1) {
+          db.logViewers.splice(index, 1);
+        }
+        await db.save().catch(err => {});
+        this.emit('logViewerRemove', id);
+        return true;
+      }
+  
+      async getlogViewers(){
+        const db = await this.configure();
+        return db?.logViewers;
+      } 
 
 }
 
