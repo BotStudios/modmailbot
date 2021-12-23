@@ -81,7 +81,6 @@ async command(message) {
           return message.reply({ files: [ new this.Discord.MessageAttachment(Buffer.from(content, 'utf-8'), 'message.txt') ] })
           break;
           case "this":
-          if(!data)return; 
           const id = message?.channel?.topic?.slice(3);
           if(!id)return this.shortMessage(message, 'This is not a modmail thread channel.', 'error', { name: 'Invalid Channel' });
           const user = await this.client.users.cache.get(id);
@@ -108,7 +107,7 @@ async command(message) {
           case "viewers":
          const viewers = await this.getlogViewers();
          return this.listingEmbed(message, viewers, "No one can view the logs.", "Logs Viewer");
-          break;
+          break;          
           default:
             if(!args[0])return this.shortMessage(message, 'Please provide a log ID.', 'error');
             var info = await this.getLog(args[0]);
