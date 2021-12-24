@@ -1,6 +1,9 @@
 module.exports = {
     name: 'block',
-    description: '',
+    description: 'Block a user from using modmail',
+    options: [
+        { name: 'UserID', description: 'The ID of the user.' }
+    ],
     run: async ({ bot, data, config, message, args }) => {
         var id = message?.channel?.topic?.slice(3);
         if(args[0]) id = args[0];
