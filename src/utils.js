@@ -3,16 +3,20 @@ const mongoose = require('mongoose');
 const { EventEmitter } = require('node:events');
 const uniqBy = require('lodash/uniqBy');
 const error = require('./errors.js');
+const Discord = require('discord.js');
+const fs = require('fs');
 
 class Utils extends EventEmitter {
-    constructor(Discord, client, collection) {
+    constructor(client, collection) {
         super();
         this.client = client;
-        this.Discord = Discord;
         this.collection = collection;
         this._ = uniqBy;
         this.error = error;         
         this.config = config;
+        this.Discord = Discord;
+        this.commands = new Discord.Collection();
+        this.commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
         this.settings = mongoose.model("modmail_settings", new mongoose.Schema({ tags: Object, blocked: Array, logViewers: Array }));
         this.model = mongoose.model("modmail", new mongoose.Schema({ User: String, Channel: String, Messages: Array }));
         this.logs = mongoose.model("modmail_logs", new mongoose.Schema({ Id: String, Channel: String, User: String, Timestamp: Number, Messages: Array }));
@@ -25,6 +29,7 @@ class Utils extends EventEmitter {
                       this.collection.set(x.User, x);
                   });
         }); 
+        for (const file of this.commandFiles) { const command = require(`./commands/${file}`); this.commands.set(command.name, command) }
         if(typeof config?.activity == 'string') this.client.user.setActivity(config?.activity);
         this.emit('ready');
     }
