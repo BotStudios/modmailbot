@@ -1,6 +1,6 @@
 module.exports = {
     name: 'log',
-    description: '',
+    description: 'Modmail log actions',
     run: async ({ bot, data, config, message, args }) => {
         if(!config?.logThreads)return bot.shortMessage(message, 'Modmail logs are disabled.', 'error');
         switch(args[0]) { 
