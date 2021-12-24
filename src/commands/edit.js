@@ -1,6 +1,6 @@
 module.exports = {
     name: 'edit',
-    description: '',
+    description: 'Edit a replied message',
     run: async ({ bot, data, config, message, args }) => {
         if(!data)return; 
         if(!message?.reference?.messageId) return bot.shortMessage(message, 'Please refer to a message.', 'error');
