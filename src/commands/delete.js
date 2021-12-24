@@ -1,6 +1,6 @@
 module.exports = {
     name: 'delete',
-   description: '',
+   description: 'Delete (close) a specific thread',
    run: async ({ bot, data, config, message, args }) => {
     if(!args[0])return bot.shortMessage(message, 'Please provide a user ID.', 'error');
     await bot.deleteThread({ User: args[0] }, message.author).then(() => message.reply({ embeds: [{ description: 'This thread will be deleted...'}] })).catch(err=> {});
