@@ -6,13 +6,12 @@ const client = new Discord.Client({
     partials: ["MESSAGE", "CHANNEL", "REACTION"] 
 });     
 const utils = new (require('./manager'))(client, collection);
-if(utils?.config?.port) require('./server')(utils);
 
 client.once('ready', async () => {
   await utils.ready(); 
   await utils.error.configCheck() 
+  console.log(client.user.tag)
 }); 
-
 client.on('messageCreate',  async (message) => {
   if(message.author.bot)return; 
   try{ 
