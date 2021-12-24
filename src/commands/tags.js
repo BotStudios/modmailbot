@@ -1,6 +1,6 @@
 module.exports = {
     name: 'tags',
-    description: '',
+    description: 'View a list of created tags/snippets',
     run: async ({ bot, config, message, args }) => {
         var embed = new bot.Discord.MessageEmbed().setAuthor('Snippets'); 
         var tags = ""; var tagCount = 0;
