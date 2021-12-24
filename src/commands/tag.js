@@ -1,6 +1,11 @@
 module.exports = {
     name: 'tag',
-    description: '',
+    description: 'Use tags/snippets to reply to a thread with ease',
+    options: [
+    { name: 'create (tag_name, value)', description: 'Creates a tag/snippet' },
+    { name: 'delete (tag_name)', description: 'Deletes a tag/snippet' },
+    { name: 'any <tag_name>', description: 'Get informations about a specific tag/snippet.'}
+    ],
     run: async ({  bot, data, config, message, args }) => {
         if(!args[0])return bot.error.provideATag(message);
         switch(args[0]) {
@@ -23,8 +28,6 @@ module.exports = {
              var info = await bot.getTag(args[0]);
              if(!info)return bot.shortMessage(message, `This log does not exist.`, 'error');
              return bot.shortMessage(message, info, 'custom', { name: `Snippet for ${args[0]}` });
-             
- 
          }
     }
 }
