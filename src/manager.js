@@ -67,7 +67,7 @@ try{  await message.react('✅') }catch(e) {}
    }  
 
    if (data){
-    data.Messages = this.getContent(data?.Channel, message, data?.Messages || []).Messages;
+    data.Messages = this.getContent(data?.Channel, message, data?.Messages || [], content).Messages;
     this.collection.set(data?.User, data);
     if(replyMsgId && repliedMsg) this.editMsg.set(`${replyMsgId}`, repliedMsg);
     await data.save().catch((err) => { });
@@ -112,9 +112,11 @@ async sendInbox(message, firstMsg = false) {
 
 }
   
-getContent(channel, message, messages = []) {
-   const context = [];
-   if (message.content) context.push(message.content);
+getContent(channel, message, messages = [], content) {
+   const context = []; var isTag = false;
+   if (content && message?.content) context.push(content);
+   if (content && message?.content != '' && content != message?.content) isTag = true; 
+   if(!content && message?.content) context.push(message?.content);
    if (message.attachments.size > 0){
          message.attachments.forEach((e) => {
               context.push(`[${e.proxyURL}]`);
@@ -123,7 +125,7 @@ getContent(channel, message, messages = []) {
     return {
         User: message.author.id,
         Channel: channel, 
-        Messages: [ ...messages, { [`${message.author.tag}`] : { content: `${context.join(" ")}`, avatar: message?.author?.avatarURL({ format: 'jpg' }), timestamp: message.createdAt, recipient: message?.channel?.type != 'DM' ? true : false } } ]
+        Messages: [ ...messages, { [`${message.author.tag}`] : { content: `${context.join(" ")}`, avatar: message?.author?.avatarURL({ format: 'jpg' }), timestamp: message.createdAt, recipient: message?.channel?.type != 'DM' ? true : false, isTag } } ]
     };
   }
   
@@ -151,6 +153,9 @@ setTimeout(async () => {
    await this.sendInbox(message, true).then((m) => m.pin()).catch(err => {});
 }, 1000)
   }
+
+
+  
 }
 
 module.exports = Manager;
