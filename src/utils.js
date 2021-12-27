@@ -19,8 +19,9 @@ class Utils extends EventEmitter {
         this.commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
         this.settings = mongoose.model("modmail_settings", new mongoose.Schema({ tags: Object, blocked: Array, logViewers: Array }));
         this.model = mongoose.model("modmail", new mongoose.Schema({ User: String, Channel: String, Messages: Array }));
-        this.logs = mongoose.model("modmail_logs", new mongoose.Schema({ Id: String, Channel: String, User: String, Timestamp: Number, Messages: Array }));
+        this.logs = mongoose.model("modmail_logs", new mongoose.Schema({ Id: String, Channel: String, User: String, CloseAt: Date, Messages: Array }));
     }
+
 
     async ready() { 
         await mongoose.connect(config.databaseURI, { useUnifiedTopology: true, useNewUrlParser: true });
@@ -31,12 +32,12 @@ class Utils extends EventEmitter {
         }); 
         for (const file of this.commandFiles) { const command = require(`./commands/${file}`); this.commands.set(command.name, command) }
         if(typeof config?.activity == 'string') this.client.user.setActivity(config?.activity);
-        this.emit('ready');
+       this.emit('ready');
     }
    
-    async shortMessage(message, msg, color = 'custom', author = {}, footer = {}) {
+    async shortMessage(message, msg, color = 'custom', author = {}, footer = {}, title = null, fields) {
       if(!message || !msg)return;
-     return message.reply({ embeds: [{ description: `${msg}`, color: `${config?.colors[color]}`, author, footer }] })
+     return message.reply({ embeds: [{ description: `${msg}`, color: `${config?.colors[color]}`, author, footer, title, fields }] })
     }
 
     async listingEmbed(message, data, msg, name) {
@@ -162,8 +163,8 @@ class Utils extends EventEmitter {
                 Id: threadId,            
                 User: data?.User,
                 Channel: data?.Channel, 
+                CloseAt: new Date(),
                 Messages: data?.Messages,
-                Timestamp: Math.floor(new Date().getTime() / 1000)
             }); }
         const user = await this.client.users.cache.get(data.User);
         if(config?.webhookURI) {
