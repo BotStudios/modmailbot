@@ -1,6 +1,14 @@
 module.exports = {
     name: 'log',
     description: 'Modmail log actions',
+    options: [
+        { name: 'delete [logID]', description: 'Delete a specific log' },
+        { name: 'view', description: 'View a specific log' },
+        { name: 'this', description: 'View current user\'s past threads' },
+        { name: 'adduser', description: 'Add a user to the log viewers list' },
+        { name: 'removeuser', description: 'Remove a user from the log viewers list' },
+        { name: 'any <logID>', description: 'Overview of a specific log' }
+    ],
     run: async ({ bot, data, config, message, args }) => {
         if(!config?.logThreads)return bot.shortMessage(message, 'Modmail logs are disabled.', 'error');
         switch(args[0]) { 
