@@ -10,7 +10,7 @@ module.exports = {
        if(!command) return bot.shortMessage(message, `Couldn't Find This Command **(${args[0]})**`, 'error', { name: 'Command Not Found' });
        content = command?.description;
        if(Array.isArray(command?.options)) command?.options?.forEach((e) => {
-          fieldContents += `\`${e?.name}\` - ${e?.description}\n`
+          fieldContents += `\`${e?.name}\` - ${e?.description} ${e.isRequired ? '(Required)' : ''}\n`
        }); fields = [{ name: 'Options', value: fieldContents }];
        bot.shortMessage(message, content, 'custom',  null, { text: `BotStudios/ModmailBot - ${config?.version}` }, `${config?.prefix}${command.name}`, fields)
       }else {
