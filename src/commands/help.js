@@ -1,6 +1,9 @@
 module.exports = {
     name: 'help',
     description: 'Learn more about a specific command',
+    options: [
+        { name: 'Command', description: 'Name of a command' }
+    ],
     run: async ({ bot, message, config, args }) => {
       if(args[0]) {
        const command = bot.commands.get(args[0]); var fields = null; var fieldContents = '';
