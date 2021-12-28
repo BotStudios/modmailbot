@@ -20,6 +20,7 @@ class Utils extends EventEmitter {
         this.settings = mongoose.model("modmail_settings", new mongoose.Schema({ tags: Object, blocked: Array, logViewers: Array }));
         this.model = mongoose.model("modmail", new mongoose.Schema({ User: String, Channel: String, Messages: Array }));
         this.logs = mongoose.model("modmail_logs", new mongoose.Schema({ Id: String, Channel: String, User: String, CloseAt: Date, Messages: Array }));
+        this.reservedCommand = [];
     }
 
 
@@ -30,7 +31,7 @@ class Utils extends EventEmitter {
                       this.collection.set(x.User, x);
                   });
         }); 
-        for (const file of this.commandFiles) { const command = require(`./commands/${file}`); this.commands.set(command.name, command) }
+        for (const file of this.commandFiles) { const command = require(`./commands/${file}`); this.commands.set(command.name, command); this.reservedCommand.push(command.name); }
         if(typeof config?.activity == 'string') this.client.user.setActivity(config?.activity);
        this.emit('ready');
     }
