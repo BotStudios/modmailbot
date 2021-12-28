@@ -8,7 +8,6 @@ class Manager extends Utils {
     this.client = client;
     this.cooldown = new Set();
     this.editMsg = new this.Discord.Collection();
-    this.reservedCommand = ['delete', 'close', 'tags', 'tag', 'log', 'block', 'unblock', 'blocked', 'edit'];
 }
 
 async command(message) {
