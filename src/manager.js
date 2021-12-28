@@ -18,20 +18,20 @@ async command(message) {
    const args = message.content.slice(config?.prefix?.length).split(/ +/);
    const command = this.commands.get(args.shift().toLowerCase());
    if(!command) return await this.replyThread(message);  
-   try { await command.run({ bot: this, data, config, message, args }) } catch (error) { await message.reply({ embeds: [{ description: 'Something Went Wrong', color: '#e83838' }], ephemeral: true }) }
+   try { await command.run({ bot: this, data, config, message, args }) } catch (error) { console.log(error);await message.reply({ embeds: [{ description: 'Something Went Wrong', color: '#e83838' }], ephemeral: true }) }
 }
 
 
-getReplyContent(message, content, isEdited = false) {
+getReplyContent(message, content, isEdited = false, anonymous = false) {
  var image = [];
- if(!content && content != "")return;
  if(message?.attachments?.size > 0) {
      image.push('\n');
      message.attachments.forEach((e) => {
      image.push(`${e.proxyURL || ""}`);
  });
 }
-return `**${isEdited ? 'Edited ' : ''}Reply From ${message.author.username} : **\n`+`${content}${image ? image.join("\n") : ''}`
+if(`${content || ""}${image ? image.join("\n") : ''}` == "")return;
+return `**${isEdited ? 'Edited ' : ''}Reply From ${anonymous ? 'The Staff Team' : `${message.author.username}`} : **\n`+`${content || ""}${image ? image.join("\n") : ''}`
 
 }
 
@@ -40,9 +40,7 @@ async replyThread(message) {
    if(!message?.member?.roles?.cache.some(role => role.id === `${config?.roleID}`))return;
    const data = await this.model.findOne({ Channel: message.channel.id });
    if(!data)return;
-   var content;
-   var replyMsgId = message.id;
-   var repliedMsg;
+   var isTag = false; var userId; var repliedMsg; var replyMsgId = message?.id; var content;
    if(config?.replyCommand && message.content.startsWith(`${config?.prefix}${config?.replyCommand}`)){
       content = message.content.slice(config?.prefix?.length+config?.replyCommand?.length+1);
    }else if(!config?.replyCommand) content = message?.content;
@@ -51,23 +49,22 @@ async replyThread(message) {
       if(tag && !this.reservedCommand.includes(message?.content?.slice(config?.prefix?.length))) {
           this.shortMessage(message, `${tag}`, 'success', { name: `${message.author.tag}`, icon_url: `${message?.author?.avatarURL()}` }).then((m) => replyMsgId = m?.id);
           content = tag;
+          isTag = true;
       }
    }
    if(data.Channel == message?.channel?.id) {
-    await this.client.users.cache.get(data.User).send(this.getReplyContent(message, content)).then(async msg => {
-    repliedMsg = msg;
-try{  await message.react('✅') }catch(e) {}
-    }).catch(err => { message.react('❌') });
+     userId = data.User;
    }else if(message?.channel?.id?.startsWith('ID:')){
-    await this.client.users.cache.get(message?.channel?.topic.slice(3)).send(this.getReplyContent(message, content)).then(msg => {
+     userId = message?.channel?.id?.slice(3);
+   }  
+   if(!userId)return this.shortMessage(message, 'This user does not exist.', 'error');
+   this.client.users.cache.get(userId).send(this.getReplyContent(message, content)).then(msg => {
     repliedMsg = msg;
     message.react('✅');
     message.reply(`Successfully Send Message To <@${message?.channel?.topic.slice(3)}>`).then(m => { setTimeout(() => { m.delete() }, 3000) });
     }).catch(err => { message.react('❌'); })
-   }  
-
    if (data){
-    data.Messages = this.getContent(data?.Channel, message, data?.Messages || [], content).Messages;
+    data.Messages = this.getContent(data?.Channel, message, data?.Messages || [], content, isTag).Messages;
     this.collection.set(data?.User, data);
     if(replyMsgId && repliedMsg) this.editMsg.set(`${replyMsgId}`, repliedMsg);
     await data.save().catch((err) => { });
@@ -112,8 +109,8 @@ async sendInbox(message, firstMsg = false) {
 
 }
   
-getContent(channel, message, messages = [], content) {
-   const context = []; var isTag = false;
+getContent(channel, message, messages = [], content, isTag = false) {
+   const context = [];
    if (content && message?.content) context.push(content);
    if (content && message?.content != '' && content != message?.content) isTag = true; 
    if(!content && message?.content) context.push(message?.content);
