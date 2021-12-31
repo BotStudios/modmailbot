@@ -16,11 +16,18 @@
           "message": "The message object"
        }
     },
+    "threadOnClose": {
+       "info": "When a staff closes a thread",
+       "options": {
+          "channel": "The thread channel object",
+          "staff": "The information about the staff that closes the thread"
+       }
+    }
     "threadClose": {
-       "info": "When someone closes a thread",
+       "info": "When a staff closed a thread",
        "options": {
           "message": "The message object",
-          "staff": "The information about the staff that closes the thread"
+          "staff": "The information about the staff that closed the thread"
        }
     },
     "tagCreate": {
