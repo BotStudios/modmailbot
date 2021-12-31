@@ -14,7 +14,6 @@
        "info": "After a staff replies to a thread",
        "options": {
           "message": "The message object",
-          "author": "The information about the staff that replied to the thread",
           "isAnonymous": "If the thread was replied anonymously"
        }
     }
