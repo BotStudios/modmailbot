@@ -6,7 +6,7 @@ A Feature Rich [Discord.js](https://github.com/discordjs/discord.js) Modmail Bot
 - 👀 **No Tracking** - We do not collect any data from you
 - 🕓 **Easy To Setup** - Setup the modmail bot within 15 minutes
 - 💬 **Snippets & Tags** - Reply to a user with ease
-- 📃 [**Logs Viewer**](https://github.com/BotStudios/modmailbot/tree/logs-viewer) - Built in logs viewer (optional)
+- 📃 [**Logs Viewer**](https://github.com/BotStudios/modmailbot/tree/logs-viewer) - Supports [logs viewer](https://github.com/BotStudios/modmailbot/tree/logs-viewer)(optional)
 - 🔥 **Plugins** - Supports external third-party plugins to enhance user experience
 - ⚡ **Extendable** - You can easily integrate this modmail on your existing discord.js projects
 
