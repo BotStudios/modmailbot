@@ -14,6 +14,7 @@
        "info": "After a staff replies to a thread",
        "options": {
           "message": "The message object",
+          "repliedContents": "The contents replied by the staff",
           "data": "The data of the current thread",
           "isAnonymous": "If the thread was replied anonymously"
        }
