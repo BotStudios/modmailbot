@@ -22,7 +22,7 @@
           "channel": "The thread channel object",
           "staff": "The information about the staff that closes the thread"
        }
-    }
+    },
     "threadClose": {
        "info": "When a staff closed a thread",
        "options": {
