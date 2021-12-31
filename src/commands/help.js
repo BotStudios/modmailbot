@@ -12,13 +12,13 @@ module.exports = {
        if(Array.isArray(command?.options)) command?.options?.forEach((e) => {
           fieldContents += `\`${e?.name}\` - ${e?.description} ${e.isRequired ? '(Required)' : ''}\n`
        }); fields = [{ name: 'Options', value: fieldContents }];
-       bot.shortMessage(message, content, 'custom',  null, { text: `BotStudios/ModmailBot - ${config?.version}` }, `${config?.prefix}${command.name}`, fields)
+       bot.shortMessage(message, content, 'custom',  null, { text: `BotStudios/ModmailBot - v${config?.version}` }, `${config?.prefix}${command.name}`, fields)
       }else {
       var content = ``;
       bot.commands.each((e) => {
         content += `**\`${e?.name}\`** - ${e?.description}\n`;
       })
-      bot.shortMessage(message, content, 'custom',  null, { text: `BotStudios/ModmailBot - ${config?.version}` }, `Commands`)
+      bot.shortMessage(message, content, 'custom',  null, { text: `BotStudios/ModmailBot - v${config?.version}` }, `Commands`)
       }
     }
 }
