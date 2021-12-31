@@ -10,6 +10,13 @@
           "information": "Information about the web server"
        }
      },
+    "threadReply": {
+       "info": "After a staff replies to a thread",
+       "options": {
+          "message": "The message object",
+          "author": "The information about the staff that replied to the thread"
+       }
+    }
     "threadCreate": {
        "info": "When someone opens a thread",
        "options": {
@@ -68,7 +75,5 @@
           "id": "The id of the blocked user",
           "staff": "The information about the staff that unblocks the user"
        }
-    }
-     
-    
+    }    
 }
