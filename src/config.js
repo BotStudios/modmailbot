@@ -8,6 +8,7 @@ module.exports = {
     activity: '',
     prefix: '',  
     logThreads: true,
+    customReply: false,
     notifyMsg: '',
     webhookURI: '',
     logsURI: '',
