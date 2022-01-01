@@ -41,15 +41,14 @@ async replyThread(message) {
    if(!message?.member?.roles?.cache.some(role => role.id === `${config?.roleID}`))return;
    const data = await this.model.findOne({ Channel: message.channel.id });
    if(!data)return;
-  var userId; var repliedMsg; var replyMsgId = message?.id; var content;
+  var userId; var repliedMsg; var replyMsgId = message.id; var content; var isTag = false;
    if(config?.replyCommand && message.content.startsWith(`${config?.prefix}${config?.replyCommand}`)){
       content = message.content.slice(config?.prefix?.length+config?.replyCommand?.length+1);
    }else if(!config?.replyCommand) content = message?.content;
    if(message.content.startsWith(`${config?.prefix}`)){
       const tag = await this.getTag(message?.content?.slice(config?.prefix?.length));
       if(tag && !this.reservedCommand.includes(message?.content?.slice(config?.prefix?.length))) {
-          this.shortMessage(message, `${tag}`, 'success', { name: `${message.author.tag}`, icon_url: `${message?.author?.avatarURL()}` }).then((m) => replyMsgId = m?.id);
-          content = tag;
+          content = tag; isTag = true;
       }
    }
    if(data.Channel == message?.channel?.id) {
@@ -59,10 +58,10 @@ async replyThread(message) {
    }  
    if(!userId)return this.shortMessage(message, 'This user does not exist.', 'error');
    const replyContent = this.getReplyContent(message, content);
-   this.client.users.cache.get(userId).send(replyContent.data).then(msg => {
+   await this.client.users.cache.get(userId).send(replyContent.data).then(async msg => {
     repliedMsg = msg;
     if(!config?.customReply) {
-        message.react('✅').then(() => message.reply(`Successfully Send Message To <@!${data.User}>`).then(m => setTimeout(() => m.delete(), 2000)));
+        await this.repliedEmbed(message, replyContent, isTag, false).then(r => replyMsgId = r?.id);
     }else {
     this.emit('threadReply', message, replyContent.raw, data, false);
     }
@@ -90,6 +89,27 @@ async replyThread(message) {
     return embed;
   }
 
+async editedEmbed(message, args, msg, isAnonymous) {
+    const sentMessage = await message.channel.messages.cache.get(message?.reference?.messageId);
+    await message.delete();
+    await sentMessage.reply({ 
+        embeds: [ { 
+        author: { name: `Message Edited By ${message?.author?.tag}`, icon_url: `${message?.author?.avatarURL()}`}, 
+        description: `\`\`\`fix\n${args.join(" ")}\`\`\``,
+        footer: { text: `${isAnonymous ? '(Anonymous) - ' : ''}ID : ${msg?.id}` }
+    } ] })
+}
+async repliedEmbed(message, replyContent, isTag, isAnonymous) {
+    await message.delete()
+    var embed = new this.Discord.MessageEmbed()
+    .setAuthor(message.author.tag, message.author.avatarURL())
+    .setDescription(replyContent.raw)
+    .setTimestamp();
+    if(isAnonymous) embed.footer = { text: 'Anonymously' };
+    if(isTag) embed.setColor(this?.config?.colors?.success) 
+    else embed.setColor(this?.config?.colors?.primary);
+    return await message.channel.send({ embeds: [ embed ] });
+}
 
 async sendInbox(message, firstMsg = false) {
     const embeds = [];
