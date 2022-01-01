@@ -4,12 +4,12 @@ module.exports = {
     options: [
         { name: '[message]', description: 'Reply to a message to be edited' }
     ],
-    run: async ({ bot, data, config, message, args }) => {
+    run: async ({ bot, data, message, args }) => {
         if(!data)return; 
-        if(!message?.reference?.messageId) return bot.shortMessage(message, 'Please refer/reply to a message.', 'error');
-        if(!args.join(" "))return bot.shortMessage(message, 'Please provide a message to be edited.', 'error');
+        if(!message?.reference?.messageId) return bot.shortMessage(message, 'Please refer/reply to a message.', 'error').then(m => setTimeout(() => m.delete(), 2000));
+        if(!args.join(" "))return bot.shortMessage(message, 'Please provide a message to be edited.', 'error').then(m => setTimeout(() => m.delete(), 2000));
         var msg = bot.editMsg.get(message?.reference?.messageId);
-        if(!msg)return bot.shortMessage(message, 'This message cannot be edited.', 'error');
-        return await msg.edit({ content: bot.getReplyContent(message, args.join(" "), true)?.data }).then(bot.shortMessage(message, `\`\`\`fix\n${args.join(" ")}\`\`\``, 'success', { name: `Message Edited By ${message?.author?.tag}`, icon_url: `${message?.author?.avatarURL()}`}, { text: `ID : ${msg?.id}` })).catch(err => console.log(err));
+        if(!msg)return bot.shortMessage(message, 'This message cannot be edited.', 'error').then(m => setTimeout(() => m.delete(), 2000));
+        return await msg.edit({ content: bot.getReplyContent(message, args.join(" "), true)?.data }).then(bot.editedEmbed(message, args, msg, false)).catch(err => console.log(err));
     }
 } 
