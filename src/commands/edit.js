@@ -10,6 +10,6 @@ module.exports = {
         if(!args.join(" "))return bot.shortMessage(message, 'Please provide a message to be edited.', 'error');
         var msg = bot.editMsg.get(message?.reference?.messageId);
         if(!msg)return bot.shortMessage(message, 'This message cannot be edited.', 'error');
-        return msg.edit(bot.getReplyContent(message, args.join(" "), true)).then(bot.shortMessage(message, `\`\`\`fix\n${args.join(" ")}\`\`\``, 'success', { name: `Message Edited By ${message?.author?.tag}`, icon_url: `${message?.author?.avatarURL()}`}, { text: `ID : ${msg?.id}` }));
+        return await msg.edit({ content: bot.getReplyContent(message, args.join(" "), true)?.data }).then(bot.shortMessage(message, `\`\`\`fix\n${args.join(" ")}\`\`\``, 'success', { name: `Message Edited By ${message?.author?.tag}`, icon_url: `${message?.author?.avatarURL()}`}, { text: `ID : ${msg?.id}` })).catch(err => console.log(err));
     }
-}
+} 
