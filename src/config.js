@@ -1,23 +1,23 @@
 const { version } = require('./../package.json');
 module.exports = {
     version,
-    databaseURI: '',
-    port: 3000,
-    token: '',
-    guildID: '',
-    category: '',
-    roleID: '',
-    activity: '',
-    prefix: '',  
+    databaseURI: '', // *
+    token: '', // *
+    guildID: '', // *
+    category: '', // *
+    roleID: '', // *
+    prefix: '',  // *
     logThreads: true,
+    threadCloseDelay: 2500,
     customReply: false,
     notifyMsg: '',
     webhookURI: '',
+    activity: '',
     logsURI: '',
     colors: { 
-        success: '',
-        error: '',
-        primary: '',
-        custom: ''
+        success: '', // *
+        error: '', // *
+        primary: '', // *
+        custom: '' // *
     }
 }
