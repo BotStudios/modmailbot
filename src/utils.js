@@ -159,7 +159,7 @@ class Utils extends EventEmitter {
         await this.model.deleteMany({ User: data.User }).catch(err => {});
         const channel = await this.client.channels.cache.get(data.Channel);
         this.emit('threadOnClose', channel, author);
-        setTimeout(async () => { await channel.delete().catch(err => {}); }, 2500);
+        setTimeout(async () => { await channel.delete().catch(err => {}); }, config?.threadCloseDelay || 2500);
         const threadId = this.generate();
         if(config?.logThreads == true) { 
             await this.newLog({
