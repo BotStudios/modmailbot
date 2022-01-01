@@ -1,4 +1,6 @@
+const { version } = require('./../package.json');
 module.exports = {
+    version,
     databaseURI: '',
     port: 3000,
     token: '',
