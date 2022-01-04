@@ -16,7 +16,7 @@ module.exports = {
            .addField('API Latency', `${Math.round(bot?.client?.ws?.ping)}ms`, true)
            .addField('Links', `
            [\`Github\`](https://github.com/BotStudios/ModmailBot)
-           [\`Logs Viewer\`](https://github.com/BotStudios/modmailbot/tree/logs-viewer)
+           [\`Logs Viewer\`](https://github.com/BotStudios/logs-viewer)
            [\`Support Server\`](https://discord.com/invite/vYwH7Sa9N8)
            [\`Docs\`](https://github.com/BotStudios/ModmailBot/wiki)
            `, true)
