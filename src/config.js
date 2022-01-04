@@ -8,7 +8,7 @@ module.exports = {
     roleID: '', // *
     prefix: '',  // *
     logThreads: true,
-    threadCloseDelay: 2500,
+    threadCloseDelay: 1500,
     customReply: false,
     notifyMsg: '',
     webhookURI: '',
