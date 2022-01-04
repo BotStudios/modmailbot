@@ -9,7 +9,7 @@ const utils = new (require('./manager'))(client, collection);
 
 client.once('ready', async () => {
   await utils.ready(); 
-  await utils.error.configCheck() 
+  await utils.error.check() 
   console.log(client.user.tag)
 }); 
 client.on('messageCreate',  async (message) => {
