@@ -1,5 +1,5 @@
 const Utils = require('./utils');
-const config = require('./config.js');
+const { config } = require('./config.js');
 
 class Manager extends Utils {
   constructor(client, collection) {
@@ -17,7 +17,7 @@ async command(message) {
    const args = message.content.slice(config?.prefix?.length).split(/ +/);
    const command = this.commands.get(args.shift().toLowerCase());
    if(!command) return await this.replyThread(message);  
-   try { await command.run({ bot: this, data, config, message, args }) } catch (error) { await message.reply({ embeds: [{ description: 'Something Went Wrong', color: '#e83838' }], ephemeral: true }) }
+   try { await command.run({ bot: this, data, config: require('./config.js'), message, args }) } catch (error) { await message.reply({ embeds: [{ description: 'Something Went Wrong', color: '#e83838' }], ephemeral: true }) }
 }
 
 getReplyContent(message, content, isEdited = false, anonymous = false) {
