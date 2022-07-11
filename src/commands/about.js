@@ -23,9 +23,9 @@ module.exports = {
            .addField('Information', `
            *Version* : \`v${config?.version}\`
            *Log Threads* : \`${config?.logThreads ? 'Yes' : 'No'}\`
-           *Prefix* : \`${config?.prefix}\`
-           *Staff Role* : <@&${config?.roleID || 'Unset'}>
-           *Logs URI* : \`${config?.logsURI || 'Unset'}\`
+           *Prefix* : \`${config?.config?.prefix}\`
+           *Staff Role* : <@&${config?.config?.roleID || 'Unset'}>
+           *Logs URI* : \`${config?.config?.logsURI || 'Unset'}\`
            `, true)
            .setTimestamp()
         ]});
