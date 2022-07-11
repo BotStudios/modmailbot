@@ -5,7 +5,7 @@ module.exports = {
     category: '', // *
     roleID: '', // *
     prefix: '',  // *
-    logThreads: true,
+    logThreads: false,
     threadCloseDelay: 1500,
     customReply: false,
     notifyMsg: '',
