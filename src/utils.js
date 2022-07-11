@@ -1,4 +1,4 @@
-const config = require('./config.js');
+const { config } = require('./config.js');
 const mongoose = require('mongoose');
 const { EventEmitter } = require('node:events');
 const uniqBy = require('lodash/uniqBy');
