@@ -16,7 +16,7 @@ class Utils extends EventEmitter {
         this.config = config;
         this.Discord = Discord;
         this.commands = new Discord.Collection();
-        this.commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+        this.commandFiles = fs.readdirSync('./src/commands').filter(file => file.endsWith('.js'));
         this.settings = mongoose.model("modmail_settings", new mongoose.Schema({ tags: Object, blocked: Array, logViewers: Array }));
         this.model = mongoose.model("modmail", new mongoose.Schema({ User: String, Channel: String, Messages: Array }));
         this.logs = mongoose.model("modmail_logs", new mongoose.Schema({ Id: String, Channel: String, User: String, CloseAt: Date, Messages: Array }));
