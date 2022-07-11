@@ -1,11 +1,10 @@
-const config = require('./config');
+const { config } = require('./config');
 const { Util } = require('discord.js');
 
 const errors = {
     throwError: (error) => { if(!error)return; throw new Error(`${error}`); },
     provide: (value) => errors.throwError(`Please provide a ${value}`),
     check: () => {
-      if (process.versions.node < "16.2.0")return errors.throwError("Please install node.js version 16.2.0 and above.");
       if(typeof config?.token != 'string') return errors.provide('valid token');
       if(typeof config?.databaseURI != 'string') return errors.provide('valid database URI');
       if(typeof config?.guildID != 'string')return errors.provide('valid guildID');
