@@ -11,7 +11,7 @@ A Feature Rich [Discord.js](https://github.com/discordjs/discord.js) Modmail Bot
 - ⚡ **Extendable** - You can easily integrate this modmail on your existing discord.js projects
 
 ## Requirements
-- [node.js `^16.2.0`](https://nodejs.org)
+- [node.js `^16.6.0`](https://nodejs.org)
 - A [Discord Bot Application](https://discord.com/developers)
 - A [mongodb (Database)](https://www.mongodb.com)
 
