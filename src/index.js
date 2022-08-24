@@ -2,7 +2,7 @@
 const Discord = require('discord.js');
 const collection = new Discord.Collection();
 const client = new Discord.Client({ 
-    intents: [Discord.Intents.FLAGS.DIRECT_MESSAGES, Discord.Intents.FLAGS.GUILD_MESSAGES, Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_PRESENCES], 
+    intents: [Discord.GatewayIntentBits.DirectMessages, Discord.GatewayIntentBits.GuildMessages, Discord.GatewayIntentBits.Guilds, Discord.GatewayIntentBits.GuildPresences], 
     partials: ["MESSAGE", "CHANNEL", "REACTION"] 
 });     
 const utils = new (require('./manager'))(client, collection);
