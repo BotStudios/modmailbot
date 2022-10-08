@@ -15,5 +15,9 @@ A Feature Rich [Discord.js](https://github.com/discordjs/discord.js) Modmail Bot
 - A [Discord Bot Application](https://discord.com/developers)
 - A [mongodb (Database)](https://www.mongodb.com)
 
+## Author
+- [@joeleeofficial](https://github.com/joeleeofficial)
+- [@leecheeyong](https://github.com/leecheeyong)
+
 ## License
 This project is available as open source under the terms of the [AGPL-3.0 License](./LICENSE)
