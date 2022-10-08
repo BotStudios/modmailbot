@@ -9,14 +9,14 @@
     "type": "git",
     "url": "git+https://github.com/BotStudios/modmailbot.git"
   },
-  "author": "Chee Yong <tojoeleeofficial@gmail.com>",
+  "author": "Chee Yong <tojoeleeofficial@gmail.com> (https://joelee.works)",
   "license": "SEE LICENSE IN .LICENSE",
   "bugs": {
     "url": "https://github.com/BotStudios/modmailbot/issues"
   },
   "homepage": "https://github.com/BotStudios/modmailbot#readme",
   "dependencies": {
-    "discord.js": "^13.8.1",
+    "discord.js": "^13.11.0",
     "ejs": "^3.1.8",
     "express": "^4.18.1",
     "lodash": "^4.17.21",
