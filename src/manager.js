@@ -1,3 +1,4 @@
+"use strict";
 const Utils = require('./utils');
 const { config } = require('./config.js');
 
