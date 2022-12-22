@@ -38,7 +38,11 @@ class Utils extends EventEmitter {
    
     async shortMessage(message, msg, color = 'custom', author = {}, footer = {}, title = null, fields) {
       if(!message || !msg)return;
-     return message.reply({ embeds: [{ description: `${msg}`, color: `${config?.colors[color]}`, author, footer, title, fields }] })
+     return message.reply({
+        embeds: [ new this.Discord.EmbedBuilder({ author, footer, description: msg, title, fields })
+           .setColor(`${config?.colors[color]}`)
+       ]
+    })
     }
 
     async listingEmbed(message, data, msg, name) {
