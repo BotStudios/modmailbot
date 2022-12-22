@@ -1,6 +1,7 @@
 # Discord Modmail
 A Feature Rich [Discord.js](https://github.com/discordjs/discord.js) Modmail Bot, Highly Inspired By Other Modmail Bots.
 
+> This is the [stable](#) build of modmailbot that uses `discord.js@v13`, for the version that uses `discord.js@v14` use the [dev build](https://github.com/BotStudios/modmailbot/tree/dev) **(unstable)**
 ## About
 - ✨ **Highly Customizable** - Prefix, bot status, log channel, .etc
 - 👀 **No Tracking** - We do not collect any data from you
