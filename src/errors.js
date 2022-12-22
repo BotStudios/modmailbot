@@ -1,5 +1,4 @@
 const { config } = require('./config');
-const { Util } = require('discord.js');
 
 const errors = {
     throwError: (error) => { if(!error)return; throw new Error(`${error}`); },
@@ -18,7 +17,6 @@ const errors = {
       if(!config?.colors?.success)return errors.provide('success color');
       if(!config?.colors?.error)return errors.provide('error color');
       if(!config?.colors?.custom)return errors.provide('custom color');
-      for(i in config.colors) { Util.resolveColor(config?.colors[i]); }
     },
     reply: (message, value) => message.reply({ embeds: [{ description: `${value}`, color: `${config?.colors?.error}` }] }),
     exceedLimit: (message, value, max) => errors.reply(message, `${value} cannot be longer than ${max} characters.`),
