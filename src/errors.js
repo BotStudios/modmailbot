@@ -1,4 +1,5 @@
 const { config } = require('./config');
+const { EmbedBuilder } = require('discord.js');
 
 const errors = {
     throwError: (error) => { if(!error)return; throw new Error(`${error}`); },
@@ -18,7 +19,7 @@ const errors = {
       if(!config?.colors?.error)return errors.provide('error color');
       if(!config?.colors?.custom)return errors.provide('custom color');
     },
-    reply: (message, value) => message.reply({ embeds: [{ description: `${value}`, color: `${config?.colors?.error}` }] }),
+    reply: (message, value) => message.reply({ embeds: [new EmbedBuilder().setDescription(`${value}`).setColor(`${config?.colors?.error}`)] }),
     exceedLimit: (message, value, max) => errors.reply(message, `${value} cannot be longer than ${max} characters.`),
     provideAValue: (message) => errors.reply(message, 'Please provide a value.'),
     provideATag: (message) => errors.reply(message, 'Please provide a tag name.'),
