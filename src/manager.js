@@ -18,7 +18,8 @@ async command(message) {
    const args = message.content.slice(config?.prefix?.length).split(/ +/);
    const command = this.commands.get(args.shift().toLowerCase());
    if(!command) return await this.replyThread(message);  
-   try { await command.run({ bot: this, data, config: require('./config.js'), message, args }) } catch (error) { await message.reply({ embeds: [{ description: 'Something Went Wrong', color: '#e83838' }], ephemeral: true }) }
+   try { await command.run({ bot: this, data, config: require('./config.js'), message, args }) } catch (error) { 
+       await message.reply({ embeds: [{ description: 'Something Went Wrong' }], ephemeral: true }) }
 }
 
 getReplyContent(message, content, isEdited = false, anonymous = false) {
@@ -38,7 +39,7 @@ return {
 }
 
 async replyThread(message) {
-   if(message.channel.type == 'DM')return;
+   if(message.channel.type == this.Discord.ChannelType.DM)return;
    if(!message?.member?.roles?.cache.some(role => role.id === `${config?.roleID}`))return;
    const data = await this.model.findOne({ Channel: message.channel.id });
    if(!data)return;
@@ -76,15 +77,16 @@ async replyThread(message) {
 }
 
   inboxEmbed(message, firstMsg) {
-  var embed = new this.Discord.MessageEmbed()
+    var embed = new this.Discord.EmbedBuilder({
+      footer: { text: `ID : ${message.author.id}` }
+    })
    .setTimestamp()
-   .setFooter(`ID : ${message.author.id}`)
    .setColor(`${config?.colors?.custom}`)
-   .setAuthor(`${message?.author?.tag}`, `${message?.author?.avatarURL()}`);
+   .setAuthor({ name: `${message?.author?.tag}`, iconURL: `${message?.author?.avatarURL()}` });
    if(firstMsg) embed.setDescription(`**From:** <@!${message?.author?.id}>${message?.content ? `\n\`\`\`fix\n${message?.content}\`\`\`` : ''}`)
-                     .addField('Account Created On', `<t:${Math.floor(new Date(message?.author?.createdAt).getTime() / 1000)}> <t:${Math.floor(new Date(message?.author?.createdAt).getTime() / 1000)}:R>`)
+                     .addFields({ name: 'Account Created On', value: `<t:${Math.floor(new Date(message?.author?.createdAt).getTime() / 1000)}> <t:${Math.floor(new Date(message?.author?.createdAt).getTime() / 1000)}:R>` })
    if(!firstMsg) { 
-       embed.setAuthor(`From ${message?.author?.tag}`, `${message?.author?.avatarURL()}`);
+       embed.setAuthor({ name: `From ${message?.author?.tag}`, iconURL: `${message?.author?.avatarURL()}` });
        if(message?.content) embed.setDescription(`**Message:**\`\`\`fix\n${message?.content}\`\`\``) 
     }
     return embed;
@@ -95,15 +97,15 @@ async editedEmbed(message, args, msg, isAnonymous) {
     await message.delete();
     await sentMessage.reply({ 
         embeds: [ { 
-        author: { name: `Message Edited By ${message?.author?.tag}`, icon_url: `${message?.author?.avatarURL()}`}, 
+        author: { name: `Message Edited By ${message?.author?.tag}`, iconURL: `${message?.author?.avatarURL()}`}, 
         description: `\`\`\`fix\n${args.join(" ")}\`\`\``,
         footer: { text: `${isAnonymous ? '(Anonymous) - ' : ''}ID : ${msg?.id}` }
     } ] })
 }
 async repliedEmbed(message, replyContent, isTag, isAnonymous) {
     await message.delete()
-    var embed = new this.Discord.MessageEmbed()
-    .setAuthor(message.author.tag, message.author.avatarURL())
+    var embed = new this.Discord.EmbedBuilder()
+    .setAuthor({ name: message.author.tag, iconURL: message.author.avatarURL() })
     .setDescription(replyContent.raw)
     .setTimestamp();
     if(isAnonymous) embed.footer = { text: 'Anonymously' };
@@ -111,7 +113,7 @@ async repliedEmbed(message, replyContent, isTag, isAnonymous) {
     else embed.setColor(this?.config?.colors?.primary);
     return await message.channel.send({ embeds: [ embed ] });
 }
-
+ 
 async sendInbox(message, firstMsg = false) {
     const embeds = [];
     const embed = this.inboxEmbed(message, firstMsg);
@@ -120,10 +122,11 @@ async sendInbox(message, firstMsg = false) {
     const data = await this.getThread({ User: message.author.id });
     if(!data)return await this.createChannel(message);
     if (message.attachments.size > 0) {
-    message.attachments.forEach((e) => {
-     embeds.push(new this.Discord.MessageEmbed().setDescription(`${e.proxyURL || ""}`).setImage(`${e.proxyURL || ""}`).setColor(`${config?.colors?.custom}`));
+     message.attachments.forEach((e) => {
+     embeds.push(new this.Discord.EmbedBuilder().setDescription(`${e.proxyURL || ""}`).setImage(`${e.proxyURL || ""}`).setColor(`${config?.colors?.custom}`));
     });
    }
+
    if (data) {
     data.Messages = this.getContent(data?.Channel, message, data?.Messages || []).Messages;
     this.collection.set(data?.User, data);
@@ -159,8 +162,8 @@ async createChannel(message) {
     if(this.cooldown.has(message.author.id)) return message.react("❌").then(this.shortMessage(message, "You're on a cooldown, please resend this message after a few seconds", 'error', { name: 'Slow Down...'}));
     this.cooldown.add(message.author.id);
     const guild = await this.client.guilds.cache.get(config.guildID);
-   const channel = await guild.channels.create(`${message.author.username}`, { type: "GUILD_TEXT", parent: config.category, permissionOverwrites: [{ id: guild.id, deny: ["VIEW_CHANNEL"] }, { id: config.roleID, allow: ["VIEW_CHANNEL"]}, {
-    id: this.client.user.id, allow: ["VIEW_CHANNEL"]
+   const channel = await guild.channels.create({ name: `${message.author.username}`, type: this.Discord.ChannelType.GuildText, parent: config.category, permissionOverwrites: [{ id: guild.id, deny: [this.Discord.PermissionFlagsBits.ViewChannel] }, { id: config.roleID, allow: [this.Discord.PermissionFlagsBits.ViewChannel]}, {
+    id: this.client.user.id, allow: [this.Discord.PermissionFlagsBits.ViewChannel]
   }], topic: `ID:${message.author.id}` });
    const props = this.getContent(channel.id, message);
    this.collection.set(props.User, props);
@@ -174,7 +177,9 @@ async createChannel(message) {
  });
 setTimeout(async () => {
     this.cooldown.delete(message.author.id);
-   await this.sendInbox(message, true).then((m) => m.pin()).catch(err => {});
+   await this.sendInbox(message, true).then(m => m.pin()).catch(err => {
+       console.log(err)
+   });
 }, 1000)
   }
 
