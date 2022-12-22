@@ -1,4 +1,6 @@
-# Discord Modmail
+# Discord Modmail (Dev)
+
+> You're in the development branch, [main](https://github.com/BotStudios/modmailbot) branch for stable version
 A Feature Rich [Discord.js](https://github.com/discordjs/discord.js) Modmail Bot, Highly Inspired By Other Modmail Bots.
 
 ## About
