@@ -97,7 +97,7 @@ class Utils extends EventEmitter {
     async getTag(tag) {
        var db = await this.configure();
        if(!tag)return null;
-       return db?.tags[tag];
+       return db?.tags?.[tag];
     }
 
     async getTags() {
